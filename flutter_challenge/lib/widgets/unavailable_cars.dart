@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_challenge/my_icons_icons.dart';
 
 class UnavailableCars extends StatefulWidget {
   const UnavailableCars({Key? key}) : super(key: key);
@@ -8,253 +10,170 @@ class UnavailableCars extends StatefulWidget {
 }
 
 class _UnavailableCarsState extends State<UnavailableCars> {
+  final Stream<QuerySnapshot> unavailableCars =
+      FirebaseFirestore.instance.collection('UnavailableCars').snapshots();
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: [
-        Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
-                  fit: BoxFit.cover,
-                )),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                  alignment: Alignment.topLeft,
-                  height: 95,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Fiat Panda',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 15,
-                            decoration: TextDecoration.lineThrough),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 90),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return StreamBuilder<QuerySnapshot>(
+        stream: unavailableCars,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Try again');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('is loading...');
+          }
+
+          final data = snapshot.requireData;
+
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: data.size,
+            itemBuilder: (context, index) {
+              return Row(
+                children: [
+                  //diving the widget into two parts which will be the image and the informations
+                  Expanded(
+                      //giving the picture  1/3 of the space in that widget
+                      flex: 1,
+                      child: Image.network(
+                        data.docs[index]['imageUrl'],
+                        fit: BoxFit.cover,
+                      )),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    //giving the informations 2/3 of the space in that widget
+                    flex: 2,
+                    child: Container(
+                        alignment: Alignment.topLeft,
+                        height: 95,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(
+                              '${data.docs[index]['name']}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
                             Row(
-                              children: const [
-                                Icon(
-                                  Icons.ac_unit_outlined,
-                                  size: 12,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      MyIcons.air_conditioner,
+                                      size: 12,
+                                    ),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
+                                      '${data.docs[index]['aria']}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  'Aria Condizionata',
-                                  style: TextStyle(
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Row(children: [
+                                  const Icon(MyIcons.gearbox, size: 12),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  Text(
+                                    '${data.docs[index]['box']}',
+                                    style: const TextStyle(
                                       fontSize: 12,
-                                      decoration: TextDecoration.lineThrough),
-                                )
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  )
+                                ])
                               ],
                             ),
-                            Row(children: const [
-                              Icon(Icons.account_box_sharp, size: 12),
-                              Text(
-                                'Manuale',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.lineThrough),
-                              )
-                            ])
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 7,
-                      ),
-                      Row(
-                        children: [
-                          Row(
-                            children: const [
-                              Icon(
-                                Icons.dock_rounded,
-                                size: 12,
-                              ),
-                              Text(
-                                '4 porte',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.lineThrough),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Row(children: const [
-                            Icon(
-                              Icons.account_box_sharp,
-                              size: 12,
+                            const SizedBox(
+                              height: 7,
                             ),
-                            Text(
-                              '5 posti',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  decoration: TextDecoration.lineThrough),
-                            ),
-                          ])
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 7,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Km illiminati',
-                            style: TextStyle(
-                                color: Colors.green[200],
-                                fontSize: 12,
-                                decoration: TextDecoration.lineThrough),
-                          ),
-                          const Text(
-                            '171,90 €',
-                            style: TextStyle(
-                                decoration: TextDecoration.lineThrough),
-                          )
-                        ],
-                      )
-                    ],
-                  )),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-                flex: 1,
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
-                  fit: BoxFit.cover,
-                )),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                  alignment: Alignment.topLeft,
-                  height: 95,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Fiat Panda',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 15,
-                            decoration: TextDecoration.lineThrough),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 90),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
                             Row(
-                              children: const [
-                                Icon(
-                                  Icons.ac_unit_outlined,
-                                  size: 12,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      MyIcons.car_door,
+                                      size: 12,
+                                    ),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
+                                      '${data.docs[index]['door']}',
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          decoration:
+                                              TextDecoration.lineThrough),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  'Aria Condizionata',
-                                  style: TextStyle(
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Row(children: [
+                                  const Icon(
+                                    Icons.account_box_sharp,
+                                    size: 12,
+                                  ),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  Text(
+                                    '${data.docs[index]['post']}',
+                                    style: const TextStyle(
                                       fontSize: 12,
-                                      decoration: TextDecoration.lineThrough),
-                                )
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                ])
                               ],
                             ),
-                            Row(children: const [
-                              Icon(Icons.account_box_sharp, size: 12),
-                              Text(
-                                'Manuale',
-                                style: TextStyle(
+                            const SizedBox(
+                              height: 7,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '${data.docs[index]['km']}',
+                                  style: TextStyle(
+                                    color: Colors.green[200],
                                     fontSize: 12,
-                                    decoration: TextDecoration.lineThrough),
-                              )
-                            ])
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                Text(
+                                  '${data.docs[index]['price']}',
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                )
+                              ],
+                            )
                           ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 7,
-                      ),
-                      Row(
-                        children: [
-                          Row(
-                            children: const [
-                              Icon(
-                                Icons.dock_rounded,
-                                size: 12,
-                              ),
-                              Text(
-                                '4 porte',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.lineThrough),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Row(children: const [
-                            Icon(
-                              Icons.account_box_sharp,
-                              size: 12,
-                            ),
-                            Text(
-                              '5 posti',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  decoration: TextDecoration.lineThrough),
-                            ),
-                          ])
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 7,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Km illiminati',
-                            style: TextStyle(
-                                color: Colors.green[200],
-                                fontSize: 12,
-                                decoration: TextDecoration.lineThrough),
-                          ),
-                          const Text(
-                            '171,90 €',
-                            style: TextStyle(
-                                decoration: TextDecoration.lineThrough),
-                          )
-                        ],
-                      )
-                    ],
-                  )),
-            )
-          ],
-        ),
-      ],
-    );
+                        )),
+                  )
+                ],
+              );
+            },
+          );
+        });
   }
 }

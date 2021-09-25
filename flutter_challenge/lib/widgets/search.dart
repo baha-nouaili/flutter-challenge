@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './date_picker.dart';
 import './unavailable_cars.dart';
 
+//This is the search widget which will contain the other sub widgets
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
 
@@ -23,11 +24,13 @@ class _SearchState extends State<Search> {
           Container(
             padding: const EdgeInsets.only(left: 16, right: 16),
             decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 1.0,
-                    style: BorderStyle.solid),
-                borderRadius: BorderRadius.circular(5)),
+              border: Border.all(
+                color: Colors.grey.shade300,
+                width: 1.0,
+                style: BorderStyle.solid,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
             child: DropdownButton(
               items: null,
               hint: const Text('Airport'),
@@ -44,6 +47,7 @@ class _SearchState extends State<Search> {
                 Switch.adaptive(
                   value: isSwitched,
                   onChanged: (value) {
+                    //Making the switch button reactive
                     setState(() {
                       isSwitched = value;
                     });
@@ -54,17 +58,25 @@ class _SearchState extends State<Search> {
                 ),
                 Text(
                   "Riconsegna l'auto in un altro luogo",
-                  style: TextStyle(color: Colors.grey[500]),
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                  ),
                 ),
               ],
             ),
           ),
-          DatePicker(),
+          const DatePicker(),
           const Padding(
-            padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+            padding: EdgeInsets.only(
+              top: 5.0,
+              bottom: 5.0,
+            ),
             child: Text(
               'Unfortunately we run out of cars.',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(

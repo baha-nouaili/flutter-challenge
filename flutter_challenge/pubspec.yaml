@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^1.6.0
+  cloud_firestore: ^2.5.3
 
 
 
@@ -59,9 +60,14 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: MyIcons
+      fonts:  
+       - asset: assets/icons/MyIcons.ttf 
+
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/
+  # assets:
+  #   - 
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
